@@ -1,29 +1,19 @@
-# Étape 1 : Construction de l'application Angular
-FROM node:18 AS builder
+# Étape 1: Construire l'application Angular
+FROM node:18 AS build
 
-# Répertoire de travail
 WORKDIR /app
 
-# Copier les fichiers package.json et package-lock.json
-COPY package*.json ./
-
-# Installer les dépendances
+COPY angular-app/package*.json ./
 RUN npm install
 
-# Copier le reste des fichiers de l'application
-COPY . .
-
-# Construire l'application Angular
+COPY angular-app ./
 RUN npm run build --prod
 
-# Étape 2 : Création de l'image finale avec Nginx
+# Étape 2: Servir l'application Angular avec Nginx
 FROM nginx:alpine
 
-# Copier les fichiers de construction dans le répertoire de Nginx
-COPY --from=builder /app/dist/pocket-doc-ui /usr/share/nginx/html
+COPY --from=build /app/dist/pocket-doc-ui /usr/share/nginx/html
 
-# Exposer le port 80
 EXPOSE 80
 
-# Commande par défaut pour démarrer Nginx
 CMD ["nginx", "-g", "daemon off;"]
