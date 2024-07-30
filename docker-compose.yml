@@ -1,0 +1,9 @@
+version: '3'
+services:
+  myapp:
+    build: .
+    image: myapp-image2
+    container_name: myapp-container2
+    ports:
+      - "8082:80"
+    
